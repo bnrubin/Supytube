@@ -25,13 +25,28 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-
 ###
 
 from supybot.test import *
 
-class SupytubeTestCase(PluginTestCase):
+class SupytubeTestCase(ChannelPluginTestCase):
     plugins = ('Supytube',)
 
+    if network:
+        def testSimpleUrl(self):
+            url = 'http://www.youtube.com/watch?v=dQw4w9WgXcQ'
+            title = 'Rick Astley - Never Gonna Give You Up'
 
-# vim:set shiftwidth=4 tabstop=4 expandtab textwidth=79:
+            self.feedMsg(url)
+            m = self.getMsg(' ')
+            self.failUnless(title in str(m))
+
+        
+        def testTinyUrl(self):
+            url = 'http://www.youtu.be/dQw4w9WgXcQ'
+            title = 'Rick Astley - Never Gonna Give You Up'
+
+            self.feedMsg(url)
+            m = self.getMsg(' ')
+            self.failUnless(title in str(m))
+

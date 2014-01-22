@@ -1,0 +1,14 @@
+language: python
+python:
+  - "2.6"
+  - "2.7"
+  - "3.2"
+  - "3.3"
+  - "pypy"
+# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+install:
+  - pip install limnoria gdata
+# command to run tests, e.g. python setup.py test
+script:
+  - echo $TRAVIS_PYTHON_VERSION
+  - supybot-test test --plugins-dir=.
