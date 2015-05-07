@@ -1,2 +1,2 @@
-limnoria==2014.06.26
-gdata==2.0.18
+limnoria==
+google-api-python-client==1.4.0
