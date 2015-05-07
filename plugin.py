@@ -37,10 +37,8 @@ import supybot.ircmsgs as ircmsgs
 #import supybot.conf as conf
 #import supybot.log as log
 import urlparse
-import gdata.youtube
-import gdata.youtube.service
-from gdata.service import RequestError
-
+from apiclient.discovery import build
+from apiclient.errors import HttpError
 
 class Supytube(callbacks.Plugin):
     """Add the help for "@plugin help Supytube" here
@@ -50,7 +48,8 @@ class Supytube(callbacks.Plugin):
     def __init__(self, irc):
         self.__parent = super(Supytube, self)
         self.__parent.__init__(irc)
-        self.service = gdata.youtube.service.YouTubeService()
+        api_key = self.registryValue('api_key')
+        self.service = build('youtube', 'v3', developerKey=api_key)
 
     def getVideoid(self, msg):
         for word in msg.args[1].split(' '):
@@ -63,30 +62,35 @@ class Supytube(callbacks.Plugin):
                 self.log.info(videoid)
                 return videoid
 
-    def convertRating(self, oldrating):
-        if oldrating:
-            return '{:.2%}'.format((float(oldrating) / 5))
-        else:
-            return 'n/a'
+    def convertRating(self, video):
+        likes = float(video['statistics']['likeCount'])
+        dislikes = float(video['statistics']['dislikeCount'])
+
+        rating = likes / (likes + dislikes) 
+
+        return '{:.2%}'.format(rating)
 
     def doPrivmsg(self, irc, msg):
         if(self.registryValue('enable', msg.args[0]) and
                 (msg.args[1].find("youtube") != -1 or msg.args[1].find('youtu.be') != -1)):
-            id = self.getVideoid(msg)
-            if id:
+            vid = self.getVideoid(msg)
+            if vid:
                 self.log.debug('videoid = {0}'.format(id))
                 try:
-                    entry = self.service.GetYouTubeVideoEntry(video_id=id)
+                    results = self.service.videos().list(part='id,snippet,statistics',
+                            id=vid,
+                            fields='items(snippet(title),statistics)').execute()
+                    video = results['items'][0]
                 except RequestError, e:
                     self.log.error('Supytube.py: Error: {0}'.format(e))
                     return
                 try:
-                    rating = ircutils.bold(self.convertRating(entry.rating.average))
+                    rating = ircutils.bold(self.convertRating(video))
                 except AttributeError, e:
                     rating = ircutils.bold('n/a')
 
-                title = ircutils.bold(entry.media.title.text)
-                views = ircutils.bold(entry.statistics.view_count)
+                title = ircutils.bold(video['snippet']['title'])
+                views = ircutils.bold('{:,}'.format(int(video['statistics']['viewCount'])))
                 reply = 'Title: {0}, Views {1}, Rating: {2}'.format(title, views, rating)
                 irc.queueMsg(ircmsgs.privmsg(msg.args[0], reply))
             else:
