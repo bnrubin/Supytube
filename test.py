@@ -28,10 +28,11 @@
 ###
 
 from supybot.test import *
+import os
 
 class SupytubeTestCase(ChannelPluginTestCase):
     plugins = ('Supytube',)
-
+    config = {'plugins.supytube.apikey': os.environ['GOOGLE_API_KEY']}
     if network:
         def testSimpleUrl(self):
             url = 'http://www.youtube.com/watch?v=dQw4w9WgXcQ'

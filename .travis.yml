@@ -1,13 +1,14 @@
 language: python
 python:
-  - "2.7"
-  - "3.2"
-  - "3.3"
-  - "pypy"
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+- '2.7'
+- '3.2'
+- '3.3'
+- pypy
 install:
-    - 'pip install -r requirements.txt' 
-# command to run tests, e.g. python setup.py test
+- pip install -r requirements.txt
 script:
-  - echo $TRAVIS_PYTHON_VERSION
-  - cd .. && supybot-test Supytube
+- echo $TRAVIS_PYTHON_VERSION
+- cd .. && supybot-test Supytube
+env:
+  matrix:
+    secure: UESbwhk3olcbnz50i1Uh84wWOznfV6zfFqUfXpIOlYTkhCgucaWWTH1ZUE7X7l58DwP8a2gyTgxp+xkOYT36bbpL0/mO6ajAieyMghMuz5zhIejokq67crJ9fxp2iSD639+Y9L2PFjJGpNPA0D05Ae2H9t0f9FeRHc9pBmN1zMk=
