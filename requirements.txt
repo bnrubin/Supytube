@@ -1,2 +1,2 @@
-limnoria==
+limnoria==2015.03.10
 google-api-python-client==1.4.0
