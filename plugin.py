@@ -81,7 +81,7 @@ class Supytube(callbacks.Plugin):
                             id=vid,
                             fields='items(snippet(title),statistics)').execute()
                     video = results['items'][0]
-                except RequestError, e:
+                except HttpError, e:
                     self.log.error('Supytube.py: Error: {0}'.format(e))
                     return
                 try:
@@ -89,7 +89,7 @@ class Supytube(callbacks.Plugin):
                 except AttributeError, e:
                     rating = ircutils.bold('n/a')
 
-                title = ircutils.bold(video['snippet']['title'])
+                title = ircutils.bold(video['snippet']['title']).encode('utf-8', 'replace')
                 views = ircutils.bold('{:,}'.format(int(video['statistics']['viewCount'])))
                 reply = 'Title: {0}, Views {1}, Rating: {2}'.format(title, views, rating)
                 irc.queueMsg(ircmsgs.privmsg(msg.args[0], reply))
