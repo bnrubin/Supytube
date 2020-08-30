@@ -1,2 +1,2 @@
-limnoria==2020.07.01
+limnoria==2020.08.29
 google-api-python-client==1.11.0
