@@ -1,2 +1,2 @@
 limnoria==2020.10.10
-google-api-python-client==1.12.7
+google-api-python-client==1.12.8
