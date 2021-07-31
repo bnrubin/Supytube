@@ -1,2 +1,2 @@
-limnoria==2021.06.15
+limnoria==2021.07.21
 google-api-python-client==2.15.0
